@@ -3,7 +3,7 @@ router:
   bind_host: 127.0.0.1
   bind_port: 28100
   request_timeout_s: 300
-  log_path: D:/GARVIS/router/logs/router.jsonl
+  log_path: router/logs/router.jsonl
 
 endpoints:
   gpu0: http://127.0.0.1:11434
@@ -92,4 +92,4 @@ evaluator_proxy:
   bind_host: 127.0.0.1
   bind_port: 11437
   router_url: http://127.0.0.1:28100
-  log_file: D:/GARVIS/evaluator/evaluator_proxy.log
+  log_file: evaluator/evaluator_proxy.log
