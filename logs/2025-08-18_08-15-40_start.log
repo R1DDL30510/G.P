@@ -1,0 +1,39 @@
+﻿**********************
+Начало записи сценария Windows PowerShell
+Время начала: 20250818081540
+Имя пользователя: G1MvP\WIN11HOST
+Запуск от имени пользователя: G1MvP\WIN11HOST
+Имя конфигурации: 
+Компьютер: G1MVP (Microsoft Windows NT 10.0.26100.0)
+Ведущее приложение: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypass -File .\start_all.ps1
+ИД процесса: 287956
+PSVersion: 5.1.26100.4768
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.4768
+BuildVersion: 10.0.26100.4768
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Транскрибирование запущено, выходной файл D:\GARVIS\logs\2025-08-18_08-15-40_start.log
+=== Killing old Ollama services if present ===
+Disabled OllamaCPU
+Disabled OllamaGPU0
+Disabled OllamaGPU1
+Disabled Ollama2060
+Disabled Ollama2080ti
+=== Starting GARVIS stack ===
+PS>TerminatingError(): "OllamaExe not found: D:\GARVIS\bin\ollama.exe"
+OllamaExe not found: D:\GARVIS\bin\ollama.exe
+OllamaExe not found: D:\GARVIS\bin\ollama.exe
+D:\GARVIS\start_all.ps1:77 знак:36
++ ... t (Test-Path $OllamaExe)) { throw "OllamaExe not found: $OllamaExe" }
++                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (OllamaExe not f...\bin\ollama.exe:String) [], RuntimeException
+    + FullyQualifiedErrorId : OllamaExe not found: D:\GARVIS\bin\ollama.exe
+
+**********************
+Конец записи протокола Windows PowerShell
+Время окончания: 20250818081541
+**********************

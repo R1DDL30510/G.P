@@ -1,0 +1,38 @@
+﻿**********************
+Начало записи сценария Windows PowerShell
+Время начала: 20250819135728
+Имя пользователя: G1MvP\WIN11HOST
+Запуск от имени пользователя: G1MvP\WIN11HOST
+Имя конфигурации: 
+Компьютер: G1MVP (Microsoft Windows NT 10.0.26100.0)
+Ведущее приложение: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe
+ИД процесса: 10932
+PSVersion: 5.1.26100.4768
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.4768
+BuildVersion: 10.0.26100.4768
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Транскрибирование запущено, выходной файл D:\GARVIS\logs\2025-08-19_13-57-28_start.log
+=== Killing old Ollama services if present ===
+Disabled OllamaCPU
+Disabled OllamaGPU0
+Disabled OllamaGPU1
+Disabled Ollama2060
+Disabled Ollama2080ti
+=== Starting GARVIS stack ===
+PS>TerminatingError(Invoke-RestMethod): "Невозможно соединиться с удаленным сервером"
+
+=== GARVIS Startup Summary ===
+gpu0       11434  OK
+gpu1       11435  OK
+cpu        11436  OK
+router     28100  FAIL
+evaluator  11437  OK
+**********************
+Конец записи протокола Windows PowerShell
+Время окончания: 20250819135737
+**********************

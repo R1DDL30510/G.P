@@ -1,0 +1,95 @@
+router:
+  mode: heuristic
+  bind_host: 127.0.0.1
+  bind_port: 28100
+  request_timeout_s: 300
+  log_path: D:/GARVIS/router/logs/router.jsonl
+
+endpoints:
+  gpu0: http://127.0.0.1:11434
+  gpu1: http://127.0.0.1:11435
+  cpu:  http://127.0.0.1:11436
+
+hardware:
+  gpu0: { name: RTX 2080 Ti,   vram_gb: 11, est_tok_s: 40 }
+  gpu1: { name: RTX 2060 12GB, vram_gb: 12, est_tok_s: 38 }
+  cpu:  { name: CPU,           vram_gb: 0,  est_tok_s: 9.5 }
+
+# Map aliases (without :latest suffix) to endpoints.  The router will
+# normalise incoming model names by stripping ":latest" before
+# looking up in this map.
+model_map:
+  gar-chat:   gpu0
+  gar-reason: gpu1
+  gar-router: cpu
+
+# Default models if client omits the "model" field
+default_models:
+  gpu0: gar-chat:latest
+  gpu1: gar-reason:latest
+  cpu:  gar-router:latest
+
+# Heuristic keywords for /generate
+keywords:
+  gpu0: ["code", "function", "class ", "python", "c#", "fehler:", "compile", "stacktrace"]
+  gpu1: ["reason", "warum", "erklär", "analyse", "schritt", "chain of thought", "beweise"]
+
+# Inventory: each alias can define tiers for different VRAM targets.
+inventory:
+  gar-chat:latest:
+    endpoint: gpu0
+    params:
+      strengths: ["chat", "coding", "general"]
+      ctx_tokens: 8192
+      # tiers allow the router to select a different underlying model
+      # depending on available VRAM; here both tiers map to the same tag
+      tiers:
+        - tier: s
+          real_model: llama3.1:8b-instruct-q5_K_M
+          min_vram_gb: 6
+          ctx_tokens: 4096
+        - tier: m
+          real_model: llama3.1:8b-instruct-q5_K_M
+          min_vram_gb: 10
+          ctx_tokens: 8192
+      real_model: llama3.1:8b-instruct-q5_K_M
+      vram_req_gb: 8
+
+  gar-reason:latest:
+    endpoint: gpu1
+    params:
+      strengths: ["reasoning", "analysis"]
+      ctx_tokens: 8192
+      tiers:
+        - tier: s
+          real_model: deepseek-r1:7b-q6
+          min_vram_gb: 8
+          ctx_tokens: 4096
+        - tier: m
+          real_model: deepseek-r1:7b
+          min_vram_gb: 12
+          ctx_tokens: 8192
+      real_model: deepseek-r1:7b
+      vram_req_gb: 9
+
+  gar-router:latest:
+    endpoint: cpu
+    params:
+      strengths: ["classification", "summary", "route", "fallback"]
+      ctx_tokens: 4096
+      tiers:
+        - tier: s
+          real_model: phi3:3.8b
+          min_vram_gb: 0
+          ctx_tokens: 4096
+      real_model: phi3:3.8b
+
+policy:
+  min_ctx_margin: 0.2
+  allow_cpu: true
+
+evaluator_proxy:
+  bind_host: 127.0.0.1
+  bind_port: 11437
+  router_url: http://127.0.0.1:28100
+  log_file: D:/GARVIS/evaluator/evaluator_proxy.log

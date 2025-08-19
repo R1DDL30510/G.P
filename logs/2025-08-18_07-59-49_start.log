@@ -1,0 +1,97 @@
+﻿**********************
+Начало записи сценария Windows PowerShell
+Время начала: 20250818075949
+Имя пользователя: G1MvP\WIN11HOST
+Запуск от имени пользователя: G1MvP\WIN11HOST
+Имя конфигурации: 
+Компьютер: G1MVP (Microsoft Windows NT 10.0.26100.0)
+Ведущее приложение: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypass -File .\start_all.ps1
+ИД процесса: 277356
+PSVersion: 5.1.26100.4768
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.4768
+BuildVersion: 10.0.26100.4768
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Транскрибирование запущено, выходной файл D:\GARVIS\logs\2025-08-18_07-59-49_start.log
+=== Killing old Ollama services if present ===
+Disabled OllamaCPU
+Disabled OllamaGPU0
+Disabled OllamaGPU1
+Disabled Ollama2060
+Disabled Ollama2080ti
+=== Starting GARVIS stack ===
+PS>TerminatingError(Start-Process): "Не удается найти параметр, соответствующий имени параметра "Environment"."
+Start-Process : Не удается найти параметр, соответствующий имени параметра "Environment".
+D:\GARVIS\start_all.ps1:57 знак:3
++   -Environment @{ "OLLAMA_HOST"="127.0.0.1:$Gpu0Port"; "CUDA_VISIBLE_ ...
++   ~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Start-Process], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.StartProcessCommand
+Start-Process : Не удается найти параметр, соответствующий имени параметра "Environment".
+D:\GARVIS\start_all.ps1:57 знак:3
++   -Environment @{ "OLLAMA_HOST"="127.0.0.1:$Gpu0Port"; "CUDA_VISIBLE_ ...
++   ~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Start-Process], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.StartProcessCommand
+
+PS>TerminatingError(Start-Process): "Не удается найти параметр, соответствующий имени параметра "Environment"."
+Start-Process : Не удается найти параметр, соответствующий имени параметра "Environment".
+D:\GARVIS\start_all.ps1:63 знак:3
++   -Environment @{ "OLLAMA_HOST"="127.0.0.1:$Gpu1Port"; "CUDA_VISIBLE_ ...
++   ~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Start-Process], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.StartProcessCommand
+Start-Process : Не удается найти параметр, соответствующий имени параметра "Environment".
+D:\GARVIS\start_all.ps1:63 знак:3
++   -Environment @{ "OLLAMA_HOST"="127.0.0.1:$Gpu1Port"; "CUDA_VISIBLE_ ...
++   ~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Start-Process], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.StartProcessCommand
+
+PS>TerminatingError(Start-Process): "Не удается найти параметр, соответствующий имени параметра "Environment"."
+Start-Process : Не удается найти параметр, соответствующий имени параметра "Environment".
+D:\GARVIS\start_all.ps1:69 знак:3
++   -Environment @{ "OLLAMA_HOST"="127.0.0.1:$CpuPort"; "OLLAMA_NO_GPU" ...
++   ~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Start-Process], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.StartProcessCommand
+Start-Process : Не удается найти параметр, соответствующий имени параметра "Environment".
+D:\GARVIS\start_all.ps1:69 знак:3
++   -Environment @{ "OLLAMA_HOST"="127.0.0.1:$CpuPort"; "OLLAMA_NO_GPU" ...
++   ~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Start-Process], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.StartProcessCommand
+
+PS>TerminatingError(Start-Process): "Не удается найти параметр, соответствующий имени параметра "Environment"."
+Start-Process : Не удается найти параметр, соответствующий имени параметра "Environment".
+D:\GARVIS\start_all.ps1:80 знак:3
++   -Environment @{ "PORT"="$EvalPort" } | Out-Null
++   ~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Start-Process], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.StartProcessCommand
+Start-Process : Не удается найти параметр, соответствующий имени параметра "Environment".
+D:\GARVIS\start_all.ps1:80 знак:3
++   -Environment @{ "PORT"="$EvalPort" } | Out-Null
++   ~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Start-Process], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.StartProcessCommand
+
+PS>TerminatingError(Invoke-WebRequest): "Невозможно соединиться с удаленным сервером"
+PS>TerminatingError(Invoke-WebRequest): "Невозможно соединиться с удаленным сервером"
+PS>TerminatingError(Invoke-WebRequest): "Невозможно соединиться с удаленным сервером"
+PS>TerminatingError(Invoke-WebRequest): "Невозможно соединиться с удаленным сервером"
+
+=== GARVIS Startup Summary ===
+gpu0       11434  FAIL
+gpu1       11435  FAIL
+cpu        11436  FAIL
+router     28100  OK
+evaluator  11437  FAIL
+**********************
+Конец записи протокола Windows PowerShell
+Время окончания: 20250818080013
+**********************
