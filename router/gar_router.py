@@ -1,7 +1,13 @@
-import argparse, json, socketserver, sys, time, os
+import argparse
+import json
+import socketserver
+import sys
+import time
+import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
-import yaml, requests
+import yaml
+import requests
 
 # parse CLI arg for config path (default to router.yaml next to this file)
 parser = argparse.ArgumentParser()
