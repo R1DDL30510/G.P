@@ -37,8 +37,13 @@ nohup env OLLAMA_HOST="127.0.0.1:$CPU_PORT" \
           OLLAMA_MODELS="$ROOT_DIR/OllamaCPU" \
           "$OLLAMA_BIN" serve >"$LOG_DIR/cpu.log" 2>&1 &
 
-# Start router
-nohup python "$ROOT_DIR/router/gar_router.py" --config "$ROOT_DIR/router/router.yaml" \
+# Generate router config based on detected hardware
+python "$ROOT_DIR/scripts/generate_router_config.py" \
+       "$ROOT_DIR/router/router.yaml" \
+       "$ROOT_DIR/router/router.generated.yaml"
+
+# Start router with generated config
+nohup python "$ROOT_DIR/router/gar_router.py" --config "$ROOT_DIR/router/router.generated.yaml" \
       >"$LOG_DIR/router.log" 2>&1 &
 
 # Start evaluator proxy
