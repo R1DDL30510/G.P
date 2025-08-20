@@ -1,3 +1,4 @@
+---
 router:
   mode: heuristic
   bind_host: 127.0.0.1
@@ -8,18 +9,18 @@ router:
 endpoints:
   gpu0: http://127.0.0.1:11434
   gpu1: http://127.0.0.1:11435
-  cpu:  http://127.0.0.1:11436
+  cpu: http://127.0.0.1:11436
 
 hardware:
-  gpu0: { name: RTX 2080 Ti,   vram_gb: 11, est_tok_s: 40 }
-  gpu1: { name: RTX 2060 12GB, vram_gb: 12, est_tok_s: 38 }
-  cpu:  { name: CPU,           vram_gb: 0,  est_tok_s: 9.5 }
+  gpu0: {name: RTX 2080 Ti, vram_gb: 11, est_tok_s: 40}
+  gpu1: {name: RTX 2060 12GB, vram_gb: 12, est_tok_s: 38}
+  cpu: {name: CPU, vram_gb: 0, est_tok_s: 9.5}
 
 # Map aliases (without :latest suffix) to endpoints.  The router will
 # normalise incoming model names by stripping ":latest" before
 # looking up in this map.
 model_map:
-  gar-chat:   gpu0
+  gar-chat: gpu0
   gar-reason: gpu1
   gar-router: cpu
 
@@ -27,7 +28,7 @@ model_map:
 default_models:
   gpu0: gar-chat:latest
   gpu1: gar-reason:latest
-  cpu:  gar-router:latest
+  cpu: gar-router:latest
 
 # Heuristic keywords for /generate
 keywords:
