@@ -2,18 +2,16 @@
 # GARVIS Startup Script (patched version)
 # - Disables any legacy Ollama Windows services
 # - Kills any process already bound to the configured ports
-# - Launches dedicated Ollama instances for GPU0, GPU1 and CPU using
+# - Launches dedicated Ollama instances for each GPU and a CPU fallback using
 #   separate model stores (via OLLAMA_MODELS)
 # - Starts the GARVIS router and evaluator proxy
 # - Performs a health check and prints a concise summary
 # ======================================================================
 
 param(
-  [int]$Gpu0Port   = 11434,
-  [int]$Gpu1Port   = 11435,
-  [int]$CpuPort    = 11436,
-  [int]$RouterPort = 28100,
-  [int]$EvalPort   = 11437,
+  [int]$GpuPortBase = 11434,
+  [int]$RouterPort  = 28100,
+  [int]$EvalPort    = 11437,
 
   # Paths to executables and scripts
   [string]$OllamaExe = "C:\OllamaService\ollama.exe",
@@ -67,6 +65,26 @@ $logFile = Join-Path $logDir ((Get-Date).ToString('yyyy-MM-dd_HH-mm-ss') + "_sta
 Start-Transcript -Path $logFile -Append
 [Console]::OutputEncoding = [Text.UTF8Encoding]::UTF8
 
+$baseDir = Split-Path -Path $logDir
+
+# Detect GPUs and prepare directories
+$gpuInfo = ""
+try { $gpuInfo = & nvidia-smi --query-gpu=index --format=csv,noheader 2>$null } catch {}
+$gpuIndices = @()
+if ($gpuInfo) { $gpuIndices = $gpuInfo -split "`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ -match '^[0-9]+$' } }
+
+$gpuPorts = @{}
+foreach ($idx in $gpuIndices) {
+  $port = $GpuPortBase + [int]$idx
+  $gpuPorts[$idx] = $port
+  $dir = Join-Path $baseDir ("OllamaGPU" + $idx)
+  if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir | Out-Null }
+}
+
+$CpuPort = $GpuPortBase + $gpuPorts.Count
+$cpuDir = Join-Path $baseDir "OllamaCPU"
+if (-not (Test-Path $cpuDir)) { New-Item -ItemType Directory -Path $cpuDir | Out-Null }
+
 # ---- 1) disable legacy Windows services ----
 Write-Host "=== Killing old Ollama services if present ==="
 $legacy = 'OllamaCPU','OllamaGPU0','OllamaGPU1','Ollama2060','Ollama2080ti'
@@ -82,7 +100,7 @@ foreach ($svc in $legacy) {
 }
 
 # ---- 2) free any occupied ports ----
-$ports = @($Gpu0Port,$Gpu1Port,$CpuPort,$RouterPort,$EvalPort)
+$ports = @($RouterPort,$EvalPort,$CpuPort) + $gpuPorts.Values
 Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue |
   Where-Object { $ports -contains $_.LocalPort } |
   ForEach-Object {
@@ -102,29 +120,24 @@ $ollamaDir = Split-Path -Path $OllamaExe
 $routerDir = Split-Path -Path $RouterPy
 $evalDir   = Split-Path -Path $EvalPy
 
-# GPU0 instance (dedicated model store)
-$cmdGpu0 = @"
-`$env:OLLAMA_HOST='127.0.0.1:$Gpu0Port';
-`$env:CUDA_VISIBLE_DEVICES='0';
-`$env:OLLAMA_MODELS='D:\GARVIS\OllamaGPU0';
+# GPU instances
+foreach ($idx in $gpuPorts.Keys) {
+  $port = $gpuPorts[$idx]
+  $gpuDir = Join-Path $baseDir ("OllamaGPU" + $idx)
+  $cmd = @"
+`$env:OLLAMA_HOST='127.0.0.1:$port';
+`$env:CUDA_VISIBLE_DEVICES='$idx';
+`$env:OLLAMA_MODELS='$gpuDir';
 & '$OllamaExe' serve
 "@
-Start-PSChild -Command $cmdGpu0 -WorkingDir $ollamaDir
-
-# GPU1 instance
-$cmdGpu1 = @"
-`$env:OLLAMA_HOST='127.0.0.1:$Gpu1Port';
-`$env:CUDA_VISIBLE_DEVICES='1';
-`$env:OLLAMA_MODELS='D:\GARVIS\OllamaGPU1';
-& '$OllamaExe' serve
-"@
-Start-PSChild -Command $cmdGpu1 -WorkingDir $ollamaDir
+  Start-PSChild -Command $cmd -WorkingDir $ollamaDir
+}
 
 # CPU instance
 $cmdCpu = @"
 `$env:OLLAMA_HOST='127.0.0.1:$CpuPort';
 `$env:OLLAMA_NO_GPU='1';
-`$env:OLLAMA_MODELS='D:\GARVIS\OllamaCPU';
+`$env:OLLAMA_MODELS='$cpuDir';
 & '$OllamaExe' serve
 "@
 Start-PSChild -Command $cmdCpu -WorkingDir $ollamaDir
@@ -145,8 +158,10 @@ Start-Sleep -Seconds 6
 $routerStatus = Test-Http200 "http://127.0.0.1:$RouterPort/evaluate" 'POST' (@{prompt='ping'} | ConvertTo-Json -Compress)
 
 $summary = @()
-$summary += [pscustomobject]@{ Name='gpu0';   Port=$Gpu0Port;   Status=(Test-Http200 "http://127.0.0.1:$Gpu0Port/api/tags") }
-$summary += [pscustomobject]@{ Name='gpu1';   Port=$Gpu1Port;   Status=(Test-Http200 "http://127.0.0.1:$Gpu1Port/api/tags") }
+foreach ($idx in $gpuPorts.Keys) {
+  $port = $gpuPorts[$idx]
+  $summary += [pscustomobject]@{ Name="gpu$idx"; Port=$port; Status=(Test-Http200 "http://127.0.0.1:$port/api/tags") }
+}
 $summary += [pscustomobject]@{ Name='cpu';    Port=$CpuPort;    Status=(Test-Http200 "http://127.0.0.1:$CpuPort/api/tags") }
 $summary += [pscustomobject]@{ Name='router'; Port=$RouterPort; Status=$routerStatus }
 $summary += [pscustomobject]@{ Name='evaluator'; Port=$EvalPort; Status=(Test-Http200 "http://127.0.0.1:$EvalPort/api/tags") }

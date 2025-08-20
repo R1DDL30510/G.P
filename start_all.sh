@@ -1,19 +1,37 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Default ports
-GPU0_PORT=${GPU0_PORT:-11434}
-GPU1_PORT=${GPU1_PORT:-11435}
-CPU_PORT=${CPU_PORT:-11436}
+# Base ports
+GPU_PORT_BASE=${GPU_PORT_BASE:-11434}
 ROUTER_PORT=${ROUTER_PORT:-28100}
 EVAL_PORT=${EVAL_PORT:-11437}
 
 ROOT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 LOG_DIR="$ROOT_DIR/logs"
-mkdir -p "$LOG_DIR" "$ROOT_DIR/OllamaGPU0" "$ROOT_DIR/OllamaGPU1" "$ROOT_DIR/OllamaCPU"
+mkdir -p "$LOG_DIR"
+
+# Detect GPUs and prepare directories
+GPU_INFO=$(nvidia-smi --query-gpu=index --format=csv,noheader 2>/dev/null || true)
+readarray -t GPU_INDICES <<<"$GPU_INFO"
+declare -A GPU_PORTS
+for idx in "${GPU_INDICES[@]}"; do
+  [[ "$idx" =~ ^[0-9]+$ ]] || continue
+  port=$((GPU_PORT_BASE + idx))
+  GPU_PORTS[$idx]=$port
+  mkdir -p "$ROOT_DIR/OllamaGPU$idx"
+done
+
+# CPU directory for fallback
+CPU_PORT=${CPU_PORT:-$((GPU_PORT_BASE + ${#GPU_PORTS[@]}))}
+mkdir -p "$ROOT_DIR/OllamaCPU"
 
 # Kill processes on occupied ports
-for port in $GPU0_PORT $GPU1_PORT $CPU_PORT $ROUTER_PORT $EVAL_PORT; do
+ports=()
+for port in "${GPU_PORTS[@]}"; do
+  ports+=("$port")
+done
+ports+=("$CPU_PORT" "$ROUTER_PORT" "$EVAL_PORT")
+for port in "${ports[@]}"; do
   if lsof -iTCP:$port -sTCP:LISTEN >/dev/null 2>&1; then
     lsof -iTCP:$port -sTCP:LISTEN -t | xargs -r kill -9
   fi
@@ -22,15 +40,13 @@ done
 # Start Ollama instances
 OLLAMA_BIN=${OLLAMA_BIN:-$(command -v ollama)}
 
-nohup env OLLAMA_HOST="127.0.0.1:$GPU0_PORT" \
-          CUDA_VISIBLE_DEVICES=0 \
-          OLLAMA_MODELS="$ROOT_DIR/OllamaGPU0" \
-          "$OLLAMA_BIN" serve >"$LOG_DIR/gpu0.log" 2>&1 &
-
-nohup env OLLAMA_HOST="127.0.0.1:$GPU1_PORT" \
-          CUDA_VISIBLE_DEVICES=1 \
-          OLLAMA_MODELS="$ROOT_DIR/OllamaGPU1" \
-          "$OLLAMA_BIN" serve >"$LOG_DIR/gpu1.log" 2>&1 &
+for idx in "${!GPU_PORTS[@]}"; do
+  port=${GPU_PORTS[$idx]}
+  nohup env OLLAMA_HOST="127.0.0.1:$port" \
+            CUDA_VISIBLE_DEVICES=$idx \
+            OLLAMA_MODELS="$ROOT_DIR/OllamaGPU$idx" \
+            "$OLLAMA_BIN" serve >"$LOG_DIR/gpu$idx.log" 2>&1 &
+done
 
 nohup env OLLAMA_HOST="127.0.0.1:$CPU_PORT" \
           OLLAMA_NO_GPU=1 \
@@ -55,8 +71,9 @@ function check() {
     echo "$name: FAIL"
   fi
 }
-check gpu0 "http://127.0.0.1:$GPU0_PORT/api/tags"
-check gpu1 "http://127.0.0.1:$GPU1_PORT/api/tags"
+for idx in "${!GPU_PORTS[@]}"; do
+  check "gpu$idx" "http://127.0.0.1:${GPU_PORTS[$idx]}/api/tags"
+done
 check cpu  "http://127.0.0.1:$CPU_PORT/api/tags"
 check router "http://127.0.0.1:$ROUTER_PORT/evaluate"
 check evaluator "http://127.0.0.1:$EVAL_PORT/api/tags"
