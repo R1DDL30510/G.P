@@ -129,8 +129,13 @@ $cmdCpu = @"
 "@
 Start-PSChild -Command $cmdCpu -WorkingDir $ollamaDir
 
-# Router (Python)
-Start-Exe -Exe $PythonExe -ArgList @($RouterPy, '--config', $RouterCfg) -WorkingDir $routerDir
+# Generate router config based on detected hardware
+$genCfg = Join-Path $routerDir 'router.generated.yaml'
+$genScript = Join-Path $PSScriptRoot 'scripts\generate_router_config.py'
+Start-Exe -Exe $PythonExe -ArgList @($genScript, $RouterCfg, $genCfg) -WorkingDir $PSScriptRoot
+
+# Router (Python) with generated config
+Start-Exe -Exe $PythonExe -ArgList @($RouterPy, '--config', $genCfg) -WorkingDir $routerDir
 
 # Evaluator proxy (FastAPI)
 $cmdEval = @"

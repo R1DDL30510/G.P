@@ -12,9 +12,18 @@ endpoints:
   cpu: http://127.0.0.1:11436
 
 hardware:
-  gpu0: {name: RTX 2080 Ti, vram_gb: 11, est_tok_s: 40}
-  gpu1: {name: RTX 2060 12GB, vram_gb: 12, est_tok_s: 38}
-  cpu: {name: CPU, vram_gb: 0, est_tok_s: 9.5}
+  gpu0:
+    name: ${GPU0_NAME}
+    vram_gb: ${GPU0_VRAM}
+    est_tok_s: 40
+  gpu1:
+    name: ${GPU1_NAME}
+    vram_gb: ${GPU1_VRAM}
+    est_tok_s: 38
+  cpu:
+    name: ${CPU_NAME}
+    vram_gb: ${CPU_VRAM}
+    est_tok_s: 9.5
 
 # Map aliases (without :latest suffix) to endpoints.  The router will
 # normalise incoming model names by stripping ":latest" before
