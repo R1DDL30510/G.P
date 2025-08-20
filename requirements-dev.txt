@@ -11,3 +11,4 @@ fastapi==0.111.0
 requests==2.32.3
 types-PyYAML
 types-requests
+types-jsonschema
