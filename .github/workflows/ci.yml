@@ -38,9 +38,9 @@ jobs:
         run: |
           pre-commit run --show-diff-on-failure --color always --all-files
 
-      - name: Mypy type check
+      - name: Type check (mypy)
         run: mypy --no-install-types .
-      
+        
       - name: Router config schema validation (pytest -k schema)
         if: hashFiles('router/router.yaml') != ''
         run: |
