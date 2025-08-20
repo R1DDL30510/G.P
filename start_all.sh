@@ -14,8 +14,8 @@ mkdir -p "$LOG_DIR" "$ROOT_DIR/OllamaGPU0" "$ROOT_DIR/OllamaGPU1" "$ROOT_DIR/Oll
 
 # Kill processes on occupied ports
 for port in $GPU0_PORT $GPU1_PORT $CPU_PORT $ROUTER_PORT $EVAL_PORT; do
-  if lsof -iTCP:$port -sTCP:LISTEN >/dev/null 2>&1; then
-    lsof -iTCP:$port -sTCP:LISTEN -t | xargs -r kill -9
+  if lsof -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then
+    lsof -iTCP:"$port" -sTCP:LISTEN -t | xargs -r kill -9
   fi
 done
 
@@ -42,7 +42,7 @@ nohup python "$ROOT_DIR/router/gar_router.py" --config "$ROOT_DIR/router/router.
       >"$LOG_DIR/router.log" 2>&1 &
 
 # Start evaluator proxy
-nohup PORT=$EVAL_PORT python "$ROOT_DIR/evaluator/evaluator_proxy.py" \
+nohup PORT="$EVAL_PORT" python "$ROOT_DIR/evaluator/evaluator_proxy.py" \
       >"$LOG_DIR/evaluator.log" 2>&1 &
 
 # Health check

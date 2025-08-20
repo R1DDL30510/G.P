@@ -1,8 +1,8 @@
 import os
-import json
 import datetime
 import logging
 from pathlib import Path
+
 import yaml
 import requests
 from fastapi import FastAPI, Request
@@ -26,7 +26,7 @@ LOG_FILE = PROXY_CFG.get(
     "log_file", str(Path(__file__).with_name("evaluator_proxy.log"))
 )
 
-ENDPOINTS = CFG["endpoints"]      # mapping of alias to URL
+ENDPOINTS = CFG["endpoints"]  # mapping of alias to URL
 INVENTORY = CFG.get("inventory", {})  # includes real_model mapping
 
 # ensure log directory exists
@@ -39,26 +39,34 @@ logging.basicConfig(
 
 app = FastAPI()
 
+
 @app.get("/api/tags")
 async def tags():
     # Return alias-based catalogue
     items = []
     for alias, meta in INVENTORY.items():
         pm = meta.get("params", {})
-        tiers = [t.get("tier") for t in pm.get("tiers", [])] if pm.get("tiers") else ["default"]
-        items.append({
-            "name": alias,
-            "model": alias,
-            "modified_at": datetime.datetime.utcnow().isoformat() + "Z",
-            "size": 0,
-            "digest": "alias",
-            "details": {
-                "tiers": tiers,
-                "strengths": pm.get("strengths", []),
-                "ctx_tokens": pm.get("ctx_tokens", 4096),
-            },
-        })
+        tiers = (
+            [t.get("tier") for t in pm.get("tiers", [])]
+            if pm.get("tiers")
+            else ["default"]
+        )
+        items.append(
+            {
+                "name": alias,
+                "model": alias,
+                "modified_at": datetime.datetime.utcnow().isoformat() + "Z",
+                "size": 0,
+                "digest": "alias",
+                "details": {
+                    "tiers": tiers,
+                    "strengths": pm.get("strengths", []),
+                    "ctx_tokens": pm.get("ctx_tokens", 4096),
+                },
+            }
+        )
     return {"models": items}
+
 
 @app.post("/api/generate")
 async def generate(request: Request):
@@ -69,7 +77,9 @@ async def generate(request: Request):
         router_resp.raise_for_status()
         ev = router_resp.json().get("evaluator", {})
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": f"router/evaluate failed: {e}"})
+        return JSONResponse(
+            status_code=500, content={"error": f"router/evaluate failed: {e}"}
+        )
 
     decision = ev.get("decision", {})
     reason = ev.get("reason", "")
@@ -80,7 +90,9 @@ async def generate(request: Request):
     real_model = decision.get("real_model")
 
     if not alias_model or not endpoint_key or endpoint_key not in ENDPOINTS:
-        return JSONResponse(status_code=500, content={"error": f"invalid decision from evaluator: {ev}"})
+        return JSONResponse(
+            status_code=500, content={"error": f"invalid decision from evaluator: {ev}"}
+        )
 
     # derive real model name from decision or inventory
     if not real_model:
@@ -105,10 +117,14 @@ async def generate(request: Request):
         resp.raise_for_status()
         gen_data = resp.json()
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": f"upstream generate failed on {endpoint_key}: {e}"})
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"upstream generate failed on {endpoint_key}: {e}"},
+        )
 
     # return pure model response
     return JSONResponse(content=gen_data)
+
 
 if __name__ == "__main__":
     # support port override via environment variable (e.g. from start_all.sh)
