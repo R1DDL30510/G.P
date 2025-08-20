@@ -1,10 +1,12 @@
 import argparse, json, socketserver, sys, time, os
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from pathlib import Path
 import yaml, requests
 
-# parse CLI arg for config path
+# parse CLI arg for config path (default to router.yaml next to this file)
 parser = argparse.ArgumentParser()
-parser.add_argument("--config", default=r"D:\GARVIS\router\router.yaml")
+default_cfg = Path(__file__).with_name("router.yaml")
+parser.add_argument("--config", default=str(default_cfg))
 args = parser.parse_args()
 
 # load YAML configuration
@@ -53,6 +55,13 @@ def resolve_target(payload: dict):
 
     key = pick_by_keywords(prompt)
     return key, ENDPOINTS[key]
+
+
+def _normalize_alias(name: str | None) -> str | None:
+    """Normalize model alias names by stripping ":latest" and lowering."""
+    if not name:
+        return None
+    return name.lower().removesuffix(":latest")
 
 def _post_json(url: str, body: dict) -> dict:
     r = requests.post(url, json=body, timeout=TIMEOUT_S)
@@ -115,6 +124,9 @@ def evaluate_choice(prompt: str, hint_model: str | None = None) -> dict:
         meta = INVENTORY[nm]
         candidates.append((nm, meta["endpoint"], meta))
     else:
+        for mkey, meta in INVENTORY.items():
+            candidates.append((mkey, meta["endpoint"], meta))
+
     # apply context/vram constraints
     filtered = []
     for mkey, hw, meta in candidates:
