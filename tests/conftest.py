@@ -1,6 +1,8 @@
 import importlib
+import sys
 import types
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 import yaml
@@ -12,10 +14,12 @@ ROOT = Path(__file__).resolve().parents[1]
 def router_module():
     """Import gar_router.py if available; otherwise skip dependent tests."""
     try:
-        return importlib.import_module("router.gar_router")
+        with patch.object(sys, "argv", sys.argv[:1]):
+            return importlib.import_module("router.gar_router")
     except ModuleNotFoundError:
         try:
-            return importlib.import_module("gar_router")
+            with patch.object(sys, "argv", sys.argv[:1]):
+                return importlib.import_module("gar_router")
         except ModuleNotFoundError:
             pytest.skip("gar_router module not found; routing tests skipped.")
 

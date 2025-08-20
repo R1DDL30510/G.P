@@ -1,10 +1,11 @@
+---
 name: CI
 
-on:
+"on":
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ "**" ]
+    branches: ["**"]
 
 jobs:
   build-test:
@@ -30,27 +31,12 @@ jobs:
           if [ -f requirements-dev.txt ]; then
             pip install -r requirements-dev.txt
           else
-            # Minimal toolchain for lint+tests+schema checks
-            pip install pytest pytest-cov pyyaml jsonschema ruff black mypy yamllint
+            pip install pytest pytest-cov pyyaml jsonschema ruff black mypy yamllint pre-commit fastapi requests
           fi
 
-      - name: Lint (Ruff)
+      - name: Pre-commit
         run: |
-          ruff check .
-
-      - name: Format check (Black)
-        run: |
-          black --check .
-
-      - name: Static type check (mypy)
-        if: hashFiles('**/*.py') != ''
-        run: |
-          mypy --ignore-missing-imports --install-types --non-interactive .
-
-      - name: YAML lint (yamllint)
-        if: hashFiles('router/router.yaml') != ''
-        run: |
-          yamllint -d "{extends: default, rules: {line-length: {max: 180}}}" router/router.yaml
+          pre-commit run --show-diff-on-failure --color always --all-files
 
       - name: Router config schema validation (pytest -k schema)
         if: hashFiles('router/router.yaml') != ''

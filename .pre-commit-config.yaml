@@ -1,0 +1,36 @@
+exclude: ^(backups/|router/logs/)
+repos:
+  - repo: local
+    hooks:
+      - id: ruff
+        name: ruff
+        entry: ruff
+        language: system
+        types: [python]
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: black
+        name: black
+        entry: black
+        language: system
+        types: [python]
+        args: [--check]
+      - id: mypy
+        name: mypy
+        entry: mypy
+        language: system
+        types: [python]
+        args:
+          [
+            --ignore-missing-imports,
+            --install-types,
+            --non-interactive,
+            --config-file=/dev/null,
+            --cache-dir=/tmp/mypy_cache,
+          ]
+        exclude: garvis_validate.py
+      - id: yamllint
+        name: yamllint
+        entry: yamllint
+        language: system
+        types: [yaml]
+        args: ["-d", "{extends: default, rules: {line-length: {max: 180}}}"]
