@@ -9,3 +9,5 @@ yamllint==1.35.1
 pre-commit==3.7.0
 fastapi==0.111.0
 requests==2.32.3
+types-PyYAML
+types-requests
