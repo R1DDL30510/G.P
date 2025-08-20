@@ -1,3 +1,4 @@
+---
 exclude: ^(backups/|router/logs/)
 repos:
   - repo: local
