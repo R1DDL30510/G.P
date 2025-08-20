@@ -24,8 +24,6 @@ repos:
             --ignore-missing-imports,
             --install-types,
             --non-interactive,
-            --config-file=/dev/null,
-            --cache-dir=/tmp/mypy_cache,
           ]
         exclude: garvis_validate.py
       - id: yamllint

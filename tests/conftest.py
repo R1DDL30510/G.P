@@ -72,7 +72,11 @@ def mini_config():
                 "port": 11434,
                 "hardware": {"vram_gb": 24},
             },
-            "cpu": {"host": "http://127.0.0.1", "port": 11436, "hardware": {}},
+            "cpu": {
+                "host": "http://127.0.0.1",
+                "port": 11436,
+                "hardware": {},
+            },
         },
         "model_map": {
             "gar-chat": "gpu0",
