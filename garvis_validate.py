@@ -1,6 +1,6 @@
 """Cross-platform validation script for the GARVIS stack."""
+
 import json
-import os
 import socket
 import subprocess
 import time
@@ -38,7 +38,11 @@ def port_listening(port):
 
 
 # core paths
-paths = [BASE_DIR / "router" / "logs", BASE_DIR / "evaluator", BASE_DIR / "start_all.sh"]
+paths = [
+    BASE_DIR / "router" / "logs",
+    BASE_DIR / "evaluator",
+    BASE_DIR / "start_all.sh",
+]
 missing = [str(p) for p in paths if not p.exists()]
 add_result(
     "core paths present",
@@ -53,9 +57,7 @@ if not ollama:
 else:
     try:
         ver = (
-            subprocess.check_output([ollama, "--version"], timeout=10)
-            .decode()
-            .strip()
+            subprocess.check_output([ollama, "--version"], timeout=10).decode().strip()
         )
         add_result("ollama in PATH", "pass", {"path": ollama, "version": ver})
     except subprocess.TimeoutExpired:
@@ -81,10 +83,10 @@ add_result(
 
 # HTTP endpoints
 endpoints = [
-    ("gpu0", f"http://127.0.0.1:11434/api/tags"),
-    ("gpu1", f"http://127.0.0.1:11435/api/tags"),
-    ("cpu", f"http://127.0.0.1:11436/api/tags"),
-    ("eval", f"http://127.0.0.1:11437/api/tags"),
+    ("gpu0", "http://127.0.0.1:11434/api/tags"),
+    ("gpu1", "http://127.0.0.1:11435/api/tags"),
+    ("cpu", "http://127.0.0.1:11436/api/tags"),
+    ("eval", "http://127.0.0.1:11437/api/tags"),
 ]
 http_data = []
 bad = []
