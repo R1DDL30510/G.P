@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Load optional config overrides
+ENV_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/config/env"
+if [ -f "$ENV_FILE" ]; then
+  # shellcheck disable=SC1090
+  source "$ENV_FILE"
+fi
+
 # Base ports
 GPU_PORT_BASE=${GPU_PORT_BASE:-11434}
 ROUTER_PORT=${ROUTER_PORT:-28100}

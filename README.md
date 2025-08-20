@@ -42,6 +42,9 @@ The script launches three Ollama servers, the router and the evaluator proxy. Af
 
 ## Configuration
 
+- `config/env` overrides runtime ports or the path to the `ollama` binary (template: `config/env.example`).
+- `config/remote.env` holds instance variables for remote deployment (template: `config/remote.env.example`, guide: `docs/remote-setup.md`).
+
 Routing, hardware capabilities and model inventory are defined in `router/router.yaml`. Adjust endpoints, keywords, inventory or policy settings there to suit your hardware and models.
 
 ## Validation
