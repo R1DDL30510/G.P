@@ -21,7 +21,13 @@ router/         Heuristic router and YAML configuration
 ollama/         Example Modelfiles (e.g. custom assistant)
 SERVICES/       Windows service wrappers
 tests/          Basic load‑test scripts
+docs/           Project documentation and setup guides
+scripts/        Helper utilities and install scripts
 ```
+
+> 📚 **Looking for a full stack overview?** See
+> `docs/full-stack-overview.md` for a detailed reference of files,
+> paths, dependencies, and setup instructions.
 
 ## Quick start
 
