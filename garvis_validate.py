@@ -1,6 +1,5 @@
 """Cross-platform validation script for the GARVIS stack."""
 import json
-import os
 import socket
 import subprocess
 import time
@@ -81,10 +80,10 @@ add_result(
 
 # HTTP endpoints
 endpoints = [
-    ("gpu0", f"http://127.0.0.1:11434/api/tags"),
-    ("gpu1", f"http://127.0.0.1:11435/api/tags"),
-    ("cpu", f"http://127.0.0.1:11436/api/tags"),
-    ("eval", f"http://127.0.0.1:11437/api/tags"),
+    ("gpu0", "http://127.0.0.1:11434/api/tags"),
+    ("gpu1", "http://127.0.0.1:11435/api/tags"),
+    ("cpu", "http://127.0.0.1:11436/api/tags"),
+    ("eval", "http://127.0.0.1:11437/api/tags"),
 ]
 http_data = []
 bad = []
