@@ -23,7 +23,7 @@ repos:
         args:
           [
             --ignore-missing-imports,
-            --install-types,
+            --no-install-types,
             --non-interactive,
           ]
         exclude: garvis_validate.py
