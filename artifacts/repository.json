@@ -1,0 +1,10 @@
+[
+  {
+    "id": "artifact1",
+    "name": "Build 1 Duplicate"
+  },
+  {
+    "id": "artifact2",
+    "name": "Build 2"
+  }
+]
