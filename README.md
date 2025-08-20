@@ -64,6 +64,28 @@ bash tests/Loadtest.sh
 
 Edit the target URI and payloads to match your deployment.
 
+## Development
+
+For contributions and local development, install the tooling and hooks:
+
+```bash
+scripts/install_dev_dependencies.sh
+pre-commit install
+```
+
+Run linters and tests with:
+
+```bash
+pre-commit run --all-files
+pytest
+```
+
+## Monitoring
+
+`scripts/watchdog.sh` performs periodic health checks on the router and evaluator
+ports and restarts the stack via `start_all.sh` if either service stops
+responding.
+
 ## License
 
 This repository does not yet include an explicit license. If you intend to use it, please consult the project maintainers.
