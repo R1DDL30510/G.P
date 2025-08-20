@@ -10,7 +10,9 @@ EVAL_PORT=${EVAL_PORT:-11437}
 
 ROOT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 LOG_DIR="$ROOT_DIR/logs"
-mkdir -p "$LOG_DIR" "$ROOT_DIR/OllamaGPU0" "$ROOT_DIR/OllamaGPU1" "$ROOT_DIR/OllamaCPU"
+mkdir -p "$LOG_DIR"
+# Auto-detect hardware and prepare model directories
+python "$ROOT_DIR/tools/hardware_inventory.py"
 
 # Kill processes on occupied ports
 for port in $GPU0_PORT $GPU1_PORT $CPU_PORT $ROUTER_PORT $EVAL_PORT; do
