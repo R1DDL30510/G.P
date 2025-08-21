@@ -28,6 +28,8 @@ scripts/        Helper utilities and install scripts
 > 📚 **Looking for a full stack overview?** See
 > `docs/full-stack-overview.md` for a detailed reference of files,
 > paths, dependencies, and setup instructions.
+>
+> **Operational pipeline reference:** see `docs/current-state-snapshot.md` for the Git→Work-Tree→Router→Ollama flow and setup guidance.
 
 ## Quick start
 
