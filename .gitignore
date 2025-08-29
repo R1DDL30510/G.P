@@ -1,0 +1,26 @@
+# Python artefacts
+venv/
+__pycache__/
+*.pyc
+
+# Logs & model store – never commit
+logs/
+models/
+OllamaCPU/
+OllamaGPU0/
+OllamaGPU1/
+!OllamaCPU/.gitkeep
+!OllamaGPU0/.gitkeep
+!OllamaGPU1/.gitkeep
+
+# Backups & release artefacts
+backups/
+artifacts/
+
+# Build artefacts
+*.zip
+*.tmp
+
+# Windows files
+Thumbs.db
+Desktop.ini
