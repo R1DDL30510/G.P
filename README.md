@@ -2,6 +2,8 @@
 
 GARVIS is a local multi‑model routing stack built on top of [Ollama](https://ollama.com/). It runs separate Ollama instances for two GPUs and the CPU and exposes a single API that automatically selects the best model and hardware based on the prompt.
 
+This repository is trimmed for production use. Runtime model stores and other artefacts are intentionally empty so they can be populated per deployment without carrying customer‑specific data.
+
 ## Features
 
 - **Multiple Ollama nodes** – dedicated model stores for GPU0, GPU1 and CPU.
@@ -13,9 +15,9 @@ GARVIS is a local multi‑model routing stack built on top of [Ollama](https://o
 ## Repository layout
 
 ```
-OllamaCPU/      Model store for the CPU instance
-OllamaGPU0/     Model store for GPU0
-OllamaGPU1/     Model store for GPU1
+OllamaCPU/      Model store for the CPU instance (empty placeholder)
+OllamaGPU0/     Model store for GPU0 (empty placeholder)
+OllamaGPU1/     Model store for GPU1 (empty placeholder)
 evaluator/      FastAPI evaluator proxy
 router/         Heuristic router and YAML configuration
 ollama/         Example Modelfiles (e.g. custom assistant)
